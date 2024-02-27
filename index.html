@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="listenBtn">Start Listening</button>
+    <p id="counterDisplay">Count: 0</p>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let count = 0;
+
+        const listenBtn = document.getElementById('listenBtn');
+
+        // Function to update the counter
+        function updateCounter(text) {
+          const words = text.toLowerCase().split(/\s+/); // Convert to lowercase and split into words
+          words.forEach((word) => {
+            if (word === 'test') {
+              count++;
+              counterDisplay.textContent = `Count: ${count}`;
+            }
+          });
+        }
+
+        // Check for browser support
+        if ('webkitSpeechRecognition' in window) {
+          const recognition = new webkitSpeechRecognition();
+          recognition.continuous = false; // Stop automatically after speaking
+          recognition.interimResults = false; // We only want final results
+
+          recognition.onresult = (event) => {
+            const last = event.results.length - 1;
+            const text = event.results[last][0].transcript;
+            console.log('Recognized text:', text);
+            updateCounter(text);
+          };
+
+          listenBtn.onclick = () => recognition.start();
+        } else {
+          listenBtn.style.display = 'none';
+          console.log('Speech recognition not supported.');
+        }
+      });
+    </script>
+  </body>
+</html>
